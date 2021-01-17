@@ -12,23 +12,15 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 Domoticz is a Home Automation system design to control various devices and receive input from various sensors.
 For example this system can be used with: 
 
--Light switches
-
--Door sensors
-
--Doorbells
-
--Security devices
-
--Weather sensors like: UV/Rain/Wind Meters
-
--Temperature Sensors
-
--Pulse Meters
-
--Voltage / AD Meters
-
--And more ...
+* Light switches
+* Door sensors
+* Doorbells
+- Security devices
+- Weather sensors like: UV/Rain/Wind Meters
+- Temperature Sensors
+- Pulse Meters
+- Voltage / AD Meters
+- And more ...
 
 
 **Shipped version:** Always the last stable one. The last compiled version is retrieved from [this directory](https://releases.domoticz.com/releases/?dir=./beta)

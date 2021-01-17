@@ -1,0 +1,20 @@
+#!/bin/bash
+#This script will add an individual address to the incoming JSON API URL
+
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source scripts/_common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# RETRIEVE ARGUMENTS
+#=================================================
+app=$YNH_APP_INSTANCE_NAME
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+
+
+ynh_print_warn "!!Nothing Done!! !!Work in progress!!"

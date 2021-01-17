@@ -1,0 +1,38 @@
+#!/bin/bash
+#This script list all incoming IP address authorized to access the API commands in /etc/nginx/conf.d/domain.tld.d/domoticz.conf
+
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source scripts/_common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# RETRIEVE ARGUMENTS
+#=================================================
+app=$YNH_APP_INSTANCE_NAME
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+
+
+#=================================================
+# CHECK IF ARGUMENTS ARE CORRECT
+#=================================================
+
+#=================================================
+# CHECK IF AN ACTION HAS TO BE DONE
+#=================================================
+
+#=================================================
+# SPECIFIC ACTION
+#=================================================
+# LIST ALL ENTRIES
+#=================================================
+SAVEIFS=$IFS
+IFS=$(echo -en "\n\b")
+for i in $(cat /etc/nginx/conf.d/$domain.d/$app.conf | grep -e '[^#]allow.*$' -e '[^#]deny.*$'); do
+	ynh_print_info $i
+done
+IFS=$SAVEIFS

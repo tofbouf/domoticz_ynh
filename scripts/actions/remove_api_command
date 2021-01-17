@@ -1,0 +1,57 @@
+#!/bin/bash
+#This script will remove a regex in the /etc/nginx/conf.d/domain.d/domoticz.conf actions so that it's no more authorized for external JSON API
+
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source scripts/_common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# RETRIEVE ARGUMENTS
+#=================================================
+app=$YNH_APP_INSTANCE_NAME
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+
+#=================================================
+# SANITIZE REGEX
+#=================================================
+#escape & as it will screw the command line otherwise
+regex=${regex//\&/\\\&}
+
+#=================================================
+# CHECK ARGUMENT
+#=================================================
+ynh_script_progression --message="Checking argument..."
+if ! cat /etc/nginx/conf.d/$domain.d/$app.conf | grep regex;then
+	ynh_print_warn "No regex to delete
+	exit 1
+fi
+
+#=================================================
+# CHANGE CONFIG FILES
+#=================================================
+ynh_script_progression --message="Changing config file..."
+#left parenthesis cannot be escaped with \ as \( has special meaning=> must be set in []
+ynh_replace_string --match_string="regex" --replace_string="" --target_file="/etc/nginx/conf.d/$domain.d/$app.conf"
+
+#check that they are still a value for the authorization: if no more values comment the lines
+if cat /etc/nginx/conf.d/$domain.d/$app.conf | grep "if ( \$args \~\* ) {"; then
+	ynh_replace_string --match_string="if ( \$args \~\* ) {\nset \$api \"1\";\n  }" --replace_string="#if ( \$args \~\* ) {\n#set \$api \"1\";\n#  }" --target_file="/etc/nginx/conf.d/$domain.d/$app.conf"
+fi
+
+
+#=================================================
+# RESTART NGINX
+#=================================================
+ynh_script_progression --message="Reloading nginx web server..."
+ynh_systemd_action --service_name=nginx --action=reload
+
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+ynh_script_progression --message="Execution completed" --last

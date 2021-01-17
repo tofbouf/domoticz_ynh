@@ -1,0 +1,79 @@
+[list_api_command]
+name = "List all authorized JSON API commands (regex)"
+command = "/bin/bash scripts/actions/list_api_command"
+accepted_return_codes = [0]
+description = "List all authorized JSON API commands"
+
+[list_api_address]
+name = "List all authorized incoming address for JSON API commands"
+command = "/bin/bash scripts/actions/list_api_address"
+accepted_return_codes = [0]
+description = "List all authorized incoming IP for JSON API commands. First match in the list will apply"
+
+
+[add_api_command]
+name = "Add an API command authorization access"
+command = "/bin/bash scripts/actions/add_api_command"
+# user = "root"  # optional
+# cwd = "/" # optional
+# accepted_return_codes = [0, 1, 2, 3]  # optional
+accepted_return_codes = [0]
+description = "Add a new regex to the authorized external JSON API command list. NO SYNTAX CHECK"
+
+	[add_api_command.arguments]
+		[add_api_command.arguments.new_regex]
+		type="string"
+		ask.en="Regex to be authorized"
+		ask.fr="Regex à autoriser"
+		help.en="This regex take the args after the json.htm? of the authorized url"
+		help.fr="Le regex reprend l'argument après la partie json.htm? de l'adresse à autoriser"
+		example="type=command&param=udevice&idx=[0-9]*&nvalue=[0-9]*&svalue=.*$"
+		default="type=command&"
+	
+[remove_api_command]
+name = "Remove an API command authorization access"
+command = "/bin/bash scripts/actions/remove_api_command"
+accepted_return_codes = [0]
+description = "Remove a regex from the authorized command list for the external API"
+
+	
+	[remove_api_command.arguments]
+		[remove_api_command.arguments.regex]
+		type="string"
+		ask.en="Regex to be removed"
+		ask.fr="Regex à enlever"
+		help.en="This regex take the args after the json.htm? of the authorized url"
+		help.fr="Le regex reprend l'argument après la partie json.htm? de l'adresse à enlever"
+		example="type=command&param=udevice&idx=[0-9]*&nvalue=[0-9]*&svalue=.*$"
+		default="type=command&"
+
+[add_api_address]
+name = "Add an address to the authorized incoming address for JSON API commands"
+command = "/bin/bash scripts/actions/add_api_address"
+accepted_return_codes = [0, 1]
+description = "Add a new address to the authorized incoming address for external JSON API command list"
+
+	[add_api_address.arguments]
+		[add_api_address.arguments.new_address]
+		type="string"
+		ask.en="Address to be authorized"
+		ask.fr="Adresse à autoriser"
+		help.en="Enter 'allow XXX.XXX.XXX.XXX' or 'deny XXX.XXX.XXX.XXX' to authorize or deny an address (IPv4 or IPv6)"
+		help.fr="Renseigner 'allow XXX.XXX.XXX.XXX' ou 'deny XXX.XXX.XXX.XXX' pour autoriser ou interdire une addresse IPv4 ou IPv6"
+		example="allow 192.168.0.1"
+
+[remove_api_address]
+name = "Remove an address from the authorized incoming address for JSON API commands"
+command = "/bin/bash scripts/actions/remove_api_address"
+accepted_return_codes = [0]
+description = "Remove an address from the authorized incoming address for external JSON API command list"
+
+	[remove_api_address.arguments]
+		[remove_api_address.arguments.address]
+		type="string"
+		ask.en="Address to be removed"
+		ask.fr="Adresse à enlever"
+		help.en="Enter the IPv4 or IPv6 addres to remove"
+		help.fr="Renseigner l'adresse IPv4 ou IPv6 à enlever"
+		example="192.168.0.1"
+		description="Remove the corresponding 'allow' or 'deny' authorization on the list"

@@ -1,0 +1,30 @@
+#!/bin/bash
+#This script list all API command authorized in /etc/nginx/conf.d/domain.tld.d/domoticz.conf
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source scripts/_common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# RETRIEVE ARGUMENTS
+#=================================================
+app=$YNH_APP_INSTANCE_NAME
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+
+
+#=================================================
+# SPECIFIC ACTION
+#=================================================
+# LIST ALL ENTRIES
+#=================================================
+for i in $(cat /etc/nginx/conf.d/$domain.d/$app.conf | grep "  if ( \\$\args ~*" | sed 's/  if ( $args ~\* //' | sed 's/) {//' | sed 's/|/\n/g'); do
+	ynh_print_info $i
+	#hack so that the unh_print_info works... buggy action
+	sleep 1s
+done
+
+ynh_print_info "Done!"

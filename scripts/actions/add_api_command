@@ -1,0 +1,64 @@
+#!/bin/bash
+#This script will add a regex in the /etc/nginx/conf.d/domain.d/domoticz.conf actions so that it's authorized for external JSON API
+
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source scripts/_common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# RETRIEVE ARGUMENTS
+#=================================================
+app=$YNH_APP_INSTANCE_NAME
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+
+#=================================================
+# CHECK IF ARGUMENTS ARE CORRECT
+#=================================================
+ynh_script_progression --message="Checking input..."
+if cat /etc/nginx/conf.d/$domain.d/$app.conf | grep "$new_regex"; then
+	ynh_print_warn "Regex already authorized"
+	exit 1
+fi
+if [ ${new_regex:0:5} -neq "type=" ]; then
+	ynh_print_warn "Your argument must start with \'type=\'"
+	exit 1
+fi 
+
+#=================================================
+# SANITIZE REGEX
+#=================================================
+#escape & as it will screw the command line otherwise
+new_regex=${new_regex//\&/\\\&}
+
+#=================================================
+# SPECIFIC ACTION
+#=================================================
+# LIST ALL ENTRIES
+#=================================================
+ynh_script_progression --message="Adding regex to the list"
+
+#check that lines are not commented and uncomment if required
+if cat /etc/nginx/conf.d/$domain.d/$app.conf | grep "#if ( \$args \~\* ) {"; then
+	ynh_replace_string --match_string="#if ( \$args \~\* ) {\n#set \$api \"1\";\n#  }" --replace_string="if ( \$args \~\* ) {\nset \$api \"1\";\n  }" --target_file="/etc/nginx/conf.d/$domain.d/$app.conf"
+fi
+
+#left parenthesis cannot be escaped with \ as \( has special meaning=> must be set in []
+ynh_replace_string --match_string="if [(] \$args \~\* " --replace_string="if ( \$args ~* $new_regex|" --target_file="/etc/nginx/conf.d/$domain.d/$app.conf"
+
+
+#=================================================
+# RESTART NGINX
+#=================================================
+ynh_script_progression --message="Reloading nginx web server..."
+ynh_systemd_action --service_name=nginx --action=reload
+
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+ynh_script_progression --message="Execution completed" --last

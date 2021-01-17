@@ -1,0 +1,34 @@
+#!/bin/bash
+#This script will add an individual address to the incoming JSON API URL
+
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source scripts/_common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# RETRIEVE ARGUMENTS
+#=================================================
+app=$YNH_APP_INSTANCE_NAME
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+
+#=================================================
+# CHECK IF ARGUMENTS ARE CORRECT
+#=================================================
+ynh_script_progression --message="Checking input"
+case ${new_regex:0:5} in
+	allow) ;;
+	deny) ;;
+	*) 
+	ynh_print_warn "You must specify \'allow\' or \'deny\''"
+	exit 1;;
+esac
+
+
+
+
+ynh_print_warn "!!Nothing Done!! !!Work in progress!!"
